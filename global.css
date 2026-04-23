@@ -47,11 +47,11 @@
 
 @layer components {
   .tabs-icon {
-    @apply size-12 items-center justify-center;
+    @apply size-8 items-center justify-center overflow-hidden;
   }
 
   .tabs-pill {
-    @apply size-12 items-center justify-center rounded-full bg-transparent;
+    @apply size-8 items-center justify-center rounded-full bg-transparent;
   }
 
   .tabs-active {
@@ -59,7 +59,7 @@
   }
 
   .tabs-glyph {
-    @apply size-6;
+    @apply size-5;
   }
 
   .home-header {
