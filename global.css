@@ -1,6 +1,4 @@
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/preflight.css" layer(base);
-@import "tailwindcss/utilities.css";
+@import "tailwindcss";
 
 @import "nativewind/theme";
 
@@ -47,11 +45,11 @@
 
 @layer components {
   .tabs-icon {
-    @apply size-8 items-center justify-center overflow-hidden;
+    @apply size-12 items-center justify-center;
   }
 
   .tabs-pill {
-    @apply size-8 items-center justify-center rounded-full bg-transparent;
+    @apply size-12 items-center justify-center rounded-full bg-transparent;
   }
 
   .tabs-active {
@@ -59,7 +57,7 @@
   }
 
   .tabs-glyph {
-    @apply size-5;
+    @apply size-6;
   }
 
   .home-header {
