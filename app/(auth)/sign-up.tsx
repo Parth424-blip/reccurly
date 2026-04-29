@@ -10,7 +10,7 @@ import {
   validatePassword,
   type ValidationErrors,
 } from "@/libs/validation";
-import { useSignUp } from "@clerk/expo";
+import { useClerk, useSignUp } from "@clerk/expo";
 import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, Text, TextInput, View } from "react-native";
@@ -19,7 +19,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 type SignUpStep = "form" | "verification";
 
 export default function SignUpScreen() {
-  const { signUp, setActive } = useSignUp();
+  const { signUp } = useSignUp();
+  const { setActive } = useClerk();
   const router = useRouter();
 
   // Form state
@@ -73,7 +74,7 @@ export default function SignUpScreen() {
       setLoading(true);
 
       // Create the sign-up attempt with email and password
-      const result = await signUp.create({
+      const result = await (signUp as any)?.create({
         emailAddress: email.trim(),
         password,
         firstName: firstName.trim(),
@@ -81,17 +82,17 @@ export default function SignUpScreen() {
       });
 
       // Check if email verification is needed
-      if (result.status === "missing_requirements") {
-        if (result.missingFields.includes("email_address")) {
+      if (result?.status === "missing_requirements") {
+        if ((result.missingFields ?? []).includes("email_address")) {
           // Send verification email
-          await signUp.prepareEmailAddressVerification({
+          await (signUp as any)?.prepareEmailAddressVerification?.({
             strategy: "email_code",
           });
           setStep("verification");
         }
-      } else if (result.status === "complete") {
+      } else if (result?.status === "complete") {
         // Sign up is complete, set the active session
-        await setActive({
+        await setActive?.({
           session: result.createdSessionId,
           organization: undefined,
         });
@@ -115,12 +116,12 @@ export default function SignUpScreen() {
       setVerifying(true);
       setGeneralError("");
 
-      const result = await signUp.attemptEmailAddressVerification({
+      const result = await (signUp as any)?.attemptEmailAddressVerification?.({
         code: code.trim(),
       });
 
-      if (result.status === "complete") {
-        await setActive({
+      if (result?.status === "complete") {
+        await setActive?.({
           session: result.createdSessionId,
           organization: undefined,
         });
@@ -139,7 +140,9 @@ export default function SignUpScreen() {
   const handleResendCode = async () => {
     try {
       setGeneralError("");
-      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+      await (signUp as any)?.prepareEmailAddressVerification?.({
+        strategy: "email_code",
+      });
       setGeneralError(""); // Clear on success
     } catch (err: any) {
       const errorMessage = parseClerkError(err);
@@ -199,7 +202,7 @@ export default function SignUpScreen() {
               />
 
               <View className="auth-link-row">
-                <Text className="auth-link-copy">Didn't get a code?</Text>
+                <Text className="auth-link-copy">Didn&apos;t get a code?</Text>
                 <Text
                   onPress={handleResendCode}
                   className="auth-link"
