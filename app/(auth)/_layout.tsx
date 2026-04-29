@@ -14,6 +14,6 @@ export default function AuthLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false, animationEnabled: true }} />
+    <Stack screenOptions={{ headerShown: false }} />
   );
 }

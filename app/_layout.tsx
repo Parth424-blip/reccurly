@@ -11,14 +11,14 @@ const tokenCache = {
   async getToken(key: string) {
     try {
       return SecureStore.getItemAsync(key);
-    } catch (err) {
+    } catch {
       return null;
     }
   },
   async saveToken(key: string, value: string) {
     try {
       return SecureStore.setItemAsync(key, value);
-    } catch (err) {
+    } catch {
       return;
     }
   },
@@ -59,7 +59,7 @@ export default function RootLayout() {
       apiKey={process.env.EXPO_PUBLIC_POSTHOG_API_KEY!}
       options={{ host: process.env.EXPO_PUBLIC_POSTHOG_HOST }}
     >
-      <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+      <ClerkProvider publishableKey={publishableKey!} tokenCache={tokenCache}>
         <Stack screenOptions={{ headerShown: false }} />
       </ClerkProvider>
     </PostHogProvider>
