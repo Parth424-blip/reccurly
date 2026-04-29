@@ -6,7 +6,7 @@ import {
   validateEmail,
   type ValidationErrors,
 } from "@/libs/validation";
-import { useSignIn } from "@clerk/expo";
+import { useClerk, useSignIn } from "@clerk/expo";
 import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, Text, TextInput, View } from "react-native";
@@ -15,7 +15,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 type SignInStep = "form" | "mfa";
 
 export default function SignInScreen() {
-  const { signIn, setActive } = useSignIn();
+  const { signIn } = useSignIn();
+  const { setActive } = useClerk();
   const router = useRouter();
 
   // Form state
@@ -55,38 +56,37 @@ export default function SignInScreen() {
     try {
       setLoading(true);
 
-      const result = await signIn.create({
+      const result = await (signIn as any)?.create({
         identifier: email.trim(),
         password,
-        strategy: "password",
       });
 
-      if (result.status === "complete") {
+      if (result?.status === "complete") {
         // Sign in is complete, set the active session
-        await setActive({
+        await setActive?.({
           session: result.createdSessionId,
           organization: undefined,
         });
         router.replace("/(tabs)");
-      } else if (result.status === "needs_second_factor") {
+      } else if (result?.status === "needs_second_factor") {
         // MFA is required
-        const emailCodeFactor = result.supportedSecondFactors.find(
-          (factor) => factor.strategy === "email_code",
+        const emailCodeFactor = (result.supportedSecondFactors ?? []).find(
+          (factor: any) => factor.strategy === "email_code",
         );
 
         if (emailCodeFactor) {
           // Send MFA code
-          await signIn.mfa.sendEmailCode();
+          await (signIn as any)?.mfa?.sendEmailCode?.();
           setStep("mfa");
         }
-      } else if (result.status === "needs_client_trust") {
+      } else if (result?.status === "needs_client_trust") {
         // Handle client trust verification
-        const emailCodeFactor = result.supportedSecondFactors.find(
-          (factor) => factor.strategy === "email_code",
+        const emailCodeFactor = (result.supportedSecondFactors ?? []).find(
+          (factor: any) => factor.strategy === "email_code",
         );
 
         if (emailCodeFactor) {
-          await signIn.mfa.sendEmailCode();
+          await (signIn as any)?.mfa?.sendEmailCode?.();
           setStep("mfa");
         }
       } else {
@@ -110,12 +110,12 @@ export default function SignInScreen() {
       setVerifyingMfa(true);
       setGeneralError("");
 
-      const result = await signIn.mfa.verifyEmailCode({
+      const result = await (signIn as any)?.mfa?.verifyEmailCode?.({
         code: mfaCode.trim(),
       });
 
-      if (result.status === "complete") {
-        await setActive({
+      if (result?.status === "complete") {
+        await setActive?.({
           session: result.createdSessionId,
           organization: undefined,
         });
@@ -134,7 +134,7 @@ export default function SignInScreen() {
   const handleResendMfa = async () => {
     try {
       setGeneralError("");
-      await signIn.mfa.sendEmailCode();
+      await (signIn as any)?.mfa?.sendEmailCode?.();
     } catch (err: any) {
       const errorMessage = parseClerkError(err);
       setGeneralError(errorMessage);
@@ -193,7 +193,7 @@ export default function SignInScreen() {
               />
 
               <View className="auth-link-row">
-                <Text className="auth-link-copy">Didn't get a code?</Text>
+                <Text className="auth-link-copy">Didn&apos;t get a code?</Text>
                 <Text
                   onPress={handleResendMfa}
                   className="auth-link"
@@ -279,7 +279,7 @@ export default function SignInScreen() {
             />
 
             <View className="auth-link-row">
-              <Text className="auth-link-copy">Don't have an account?</Text>
+              <Text className="auth-link-copy">Don&apos;t have an account?</Text>
               <Link href="/(auth)/sign-up" asChild>
                 <Text className="auth-link">Create one</Text>
               </Link>
