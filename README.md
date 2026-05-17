@@ -4,6 +4,12 @@
 >
 > Keep renewals under control, avoid surprise charges, and track your spending like a pro.
 
+## 📌 About
+
+SubTrackr is a mobile-first subscription management app designed to help people stay in control of recurring expenses. It gives users a clean view of active plans, upcoming renewals, and spending insights so they can make better financial decisions before charges hit.
+
+This project focuses on practical day-to-day usability: fast onboarding, clear subscription visibility, secure authentication, and intuitive dashboards. It is built with Expo and React Native, making it easy to run, extend, and ship across platforms.
+
 ## ✨ App Highlights
 
 - 🔐 Authentication with Clerk
